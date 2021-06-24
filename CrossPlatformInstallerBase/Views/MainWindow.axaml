@@ -1,0 +1,187 @@
+
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CrossPlatformInstallerBase.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"  Width="700" Height="500"
+        x:Class="CrossPlatformInstallerBase.Views.MainWindow"
+        Icon="/Assets/Occlusion_icon.ico"
+        Title="Occlusion Voice Chat Win-x64 Installer" Background="#32323b" CanResize="False">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+  <Window.Resources>
+    <PageSlide x:Key="PageSlider" Duration="0:0:0.5" Orientation="Horizontal">
+      <PageSlide.SlideInEasing>
+        <CubicEaseOut></CubicEaseOut>
+      </PageSlide.SlideInEasing>
+    <PageSlide.SlideOutEasing>
+        <CubicEaseOut></CubicEaseOut>
+      </PageSlide.SlideOutEasing>
+    </PageSlide>
+  </Window.Resources>
+    
+  <Grid>
+    <StackPanel Orientation="Vertical">
+    <Grid>
+      <Grid Name="Grid1" IsVisible="true" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30">Occlusion Voice Chat x64 Installer</TextBlock>
+          </StackPanel>
+    
+          <TextBox TextAlignment="Center" IsReadOnly="True" Height="310" Margin="30 0 30 0" Text="{Binding LicenseText}">
+        
+          </TextBox>
+        </StackPanel>
+      </Grid>
+      
+      <Grid Name="Grid2" IsVisible="false" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30">
+              Configuration
+            </TextBlock>
+          </StackPanel>
+    
+          <TextBlock HorizontalAlignment="Center">Please choose an install location.</TextBlock>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBox Name="InstallLocationBox" VerticalContentAlignment="Center" Watermark="Install location" Width="400" Height="30" Margin="30 10 2 0" Text="{Binding InstallDirectory}"/>
+            <Button Name="BrowseButton" Cursor="Hand" Height="30" Margin="2 10 0 0">Browse...</Button>
+          </StackPanel>
+          <TextBlock Name="InvalidPathText" IsVisible="False" HorizontalAlignment="Center" Margin="0 5 0 0" Foreground="#ff5d3d">
+            Invalid path. Ensure it is not greater than 255 characters and does not contain any invalid characters.
+          </TextBlock>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 60 0 0">
+          <ToggleSwitch Name="MakeStartMenuShortcut" Foreground="#BDC3C7" IsChecked="True" OnContent="Create start menu shortcut" OffContent="Create start menu shortcut" Margin="20 0 20 0" BorderBrush="#31313b"/>
+          <ToggleSwitch Name="MakeDesktopShortcut" Foreground="#BDC3C7" IsChecked="True" OnContent="Create desktop shortcut" OffContent="Create desktop shortcut" Margin="20 0 20 0" BorderBrush="#31313b"/>
+        </StackPanel>  
+      
+        </StackPanel>
+      </Grid>
+
+      <Grid Name="Grid3" IsVisible="false" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30" Text="Prerequisites"></TextBlock>
+          </StackPanel>
+          <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" FontSize="15" Text="First before Occlusion can be installed, .Net 5 must be installed on your system."></TextBlock>
+          <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="{Binding PreReqInstallText}"></TextBlock>
+          <ProgressBar Name="PreReqBar" BorderBrush="#454552" BorderThickness="1" Width="500" Height="25" Margin="0 10 0 0" Minimum="0" Maximum="1.2"></ProgressBar>
+
+        </StackPanel>
+      </Grid>
+    
+
+    <Grid Name="Grid4" IsVisible="False" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30">
+              Please wait Occlusion is installed...
+            </TextBlock>
+          </StackPanel>
+    
+          <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="{Binding InstallStatus}"></TextBlock>
+          <ProgressBar Name="InstallProgressBar" BorderBrush="#454552" BorderThickness="1" Width="500" Height="25" Margin="0 10 0 0" Minimum="0" Maximum="1"></ProgressBar>
+          
+        </StackPanel>
+      </Grid>
+
+      <Grid Name="Grid5" IsVisible="false" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30" Text="{Binding FinalScreenTitle}"></TextBlock>
+          </StackPanel>
+
+          <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="20 20 20 0" Text="{Binding FinalScreenMessage}"></TextBlock>
+          <ToggleSwitch Name="RunProgramAfterClosing" HorizontalAlignment="Center" Foreground="#BDC3C7" IsChecked="true" Margin="0 20 0 0" OnContent="Run the program after closing" OffContent="Run the program after closing"></ToggleSwitch>
+        </StackPanel>
+      </Grid>
+
+      <Grid Name="GridReinstall" IsVisible="false" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30" Text="Program is already installed"></TextBlock>
+          </StackPanel>
+          <TextBlock FontSize="18" Margin="0 20 0 0 " HorizontalAlignment="Center">What would you like to do?</TextBlock>
+
+          <StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Name="ReinstallButton" Margin="4 0 4 0" Padding="12" Cursor="Hand">Reinstall</Button>
+            <Button Name="MoveInstallButton" Margin="4 0 4 0" Padding="12" Cursor="Hand">Move Install Folder</Button>
+            <Button Name="UninstallButton" Margin="4 0 4 0" Padding="12" Cursor="Hand">Uninstall</Button>
+          </StackPanel>
+        </StackPanel>
+      </Grid>
+
+      <Grid Name="GridMoveInstall" IsVisible="false" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30" Text="Program is already installed"></TextBlock>
+          </StackPanel>
+
+          <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="{Binding MoveStatus}"></TextBlock>
+          <ProgressBar Name="MoveFolderBar" BorderBrush="#454552" BorderThickness="1" Width="500" Height="25" Margin="0 10 0 0" Minimum="0" Maximum="1"></ProgressBar>
+
+        </StackPanel>
+      </Grid>
+
+      <Grid Name="GridUninstall" IsVisible="false" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30">
+              Uninstall Options
+            </TextBlock>
+          </StackPanel>
+
+          <TextBlock TextWrapping="Wrap" Margin="20 0 20 0" TextAlignment="Center" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center">
+            Warning: uninstalling removes the entire Occlusion directory. This includes any modifications or other files you may be storing in it for one reason or another.
+          </TextBlock>
+
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 60 0 0">
+            <ToggleSwitch Name="RemoveStartShortcut" Foreground="#BDC3C7" IsChecked="True" OnContent="Remove start menu shortcut" OffContent="Remove start menu shortcut" Margin="20 0 20 0" BorderBrush="#31313b"/>
+            <ToggleSwitch Name="RemoveDesktopShortcut" Foreground="#BDC3C7" IsChecked="True" OnContent="Remove desktop shortcut" OffContent="Remove desktop shortcut" Margin="20 0 20 0" BorderBrush="#31313b"/>
+          </StackPanel>
+
+        </StackPanel>
+      </Grid>
+
+      <Grid Name="GridUninstallProgress" IsVisible="false" Width="700" HorizontalAlignment="Left">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
+            <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30">
+              Uninstall Options
+            </TextBlock>
+          </StackPanel>
+
+          <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="{Binding UninstallStatus}"></TextBlock>
+          <ProgressBar Name="UninstallBar" BorderBrush="#454552" BorderThickness="1" Width="500" Height="25" Margin="0 10 0 0" Minimum="0" Maximum="1"></ProgressBar>
+        </StackPanel>
+      </Grid>
+    </Grid>
+
+      
+  
+  </StackPanel>
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 10 30 10">
+      <Button Name="BackButton" Cursor="Hand" Padding="10 6 10 6" Margin="0 0 5 0" IsEnabled="false" Content="{Binding BackText}"></Button>
+      <Button Name="NextButton" Cursor="Hand" Padding="10 6 10 6" Content="{Binding NextText}"></Button>
+    </StackPanel>
+  </Grid>
+  
+    
+      
+      
+    
+</Window>

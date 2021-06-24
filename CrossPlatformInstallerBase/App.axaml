@@ -1,0 +1,32 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:CrossPlatformInstallerBase"
+             x:Class="CrossPlatformInstallerBase.App"
+             xmlns:system="clr-namespace:System;assembly=netstandard">
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+      <system:Double x:Key="CheckBoxHoveredOpacity">0.12</system:Double>
+      <system:Double x:Key="CheckBoxPressedOpacity">0.26</system:Double>
+    </Application.Resources>
+  
+    <Application.Styles>
+      
+      <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
+      
+      <Style Selector="ScrollBar:vertical /template/ Thumb#thumb">
+        <Setter Property="Background" Value="#4f4f5e"></Setter>
+      </Style>
+
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/BaseDark.xaml" />
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/Base.xaml" />
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentBaseDark.xaml" />
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesDark.xaml" />
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ToggleSwitch.xaml"/>
+      <StyleInclude Source="avares://CrossPlatformInstallerBase/DefaultTheme.xaml"></StyleInclude>
+
+      
+    </Application.Styles>
+</Application>
