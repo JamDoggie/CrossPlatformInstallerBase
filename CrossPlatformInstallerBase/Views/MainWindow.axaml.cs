@@ -75,7 +75,7 @@ namespace CrossPlatformInstallerBase.Views
 
         public string MoveFolderPath { get; set; } = string.Empty;
 
-        public const int ProgramVersion = 1; // This version number does not have anything to do with a format like 1.0.0. Any time the version number updates at all, even for just a patch
+        public const int ProgramVersion = 2; // This version number does not have anything to do with a format like 1.0.0. Any time the version number updates at all, even for just a patch
                                              // this number should increase by one.
 
         public MainWindow()
@@ -84,6 +84,10 @@ namespace CrossPlatformInstallerBase.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+
+            uint attr = 19;
+            int val = 1;
+            int i = App.DwmSetWindowAttribute(PlatformImpl.Handle.Handle, attr, ref val, sizeof(int));
         }
 
         private void InitializeComponent()
@@ -189,7 +193,7 @@ namespace CrossPlatformInstallerBase.Views
                 if (result != string.Empty)
                 {
                     MoveFolderPath = result;
-                    GoToPage(6);
+                    GoToPage(GetPageIndexByType<MoveInstallPage>());
                 }
                     
             }
@@ -215,7 +219,7 @@ namespace CrossPlatformInstallerBase.Views
             InstallLocationBox.IsEnabled = false;
             BrowseButton.IsEnabled = false;
 
-            GoToPage(2);
+            GoToPage(GetPageIndexByType<PreReqPage>());
             (DataContext as MainWindowViewModel).NextText = "Reinstall";
         }
 
@@ -664,11 +668,8 @@ namespace CrossPlatformInstallerBase.Views
                     var installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion_net5_download.tmp.exe";
 
                     wc.DownloadFileAsync(
-                        // Param1 = Link of file
                         new Uri("https://download.visualstudio.microsoft.com/download/pr/2b83d30e-5c86-4d37-a1a6-582e22ac07b2/c7b1b7e21761bbfb7b9951f5b258806e/windowsdesktop-runtime-5.0.7-win-x64.exe"),
-                        // Param2 = Path to save
-                        installerPath
-                    );
+                        installerPath);
                     
                     // Progress bar
                     wc.DownloadProgressChanged += (sender, e) =>
@@ -712,6 +713,11 @@ namespace CrossPlatformInstallerBase.Views
             base.OnSwitchedTo();
         }
 
+        public override void NextPage()
+        {
+            window.GoToPage(window.GetPageIndexByType<InstallingPage>());
+        }
+
         public bool CheckForRequiredRuntime()
         {
             // Start a new process. This process will be a command prompt running the dotnet command to check what versions of .net are installed.
@@ -726,6 +732,7 @@ namespace CrossPlatformInstallerBase.Views
 
             string output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
+
             return output.Contains("Microsoft.WindowsDesktop.App 5.");
         }
     }
@@ -740,7 +747,6 @@ namespace CrossPlatformInstallerBase.Views
 
         public override void OnSwitchedTo()
         {
-            Debug.WriteLine("switched");
             Task.Run(() =>
             {
                 var path = Path.GetDirectoryName(window.RegistryPath);
@@ -763,7 +769,7 @@ namespace CrossPlatformInstallerBase.Views
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        window.GoToPage(5);
+                        window.GoToPage(window.GetPageIndexByType<FinalPage>());
                         window.RunProgramAfterClosing.IsVisible = false;
                     });
 
