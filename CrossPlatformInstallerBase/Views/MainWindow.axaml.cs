@@ -75,7 +75,7 @@ namespace CrossPlatformInstallerBase.Views
 
         public string MoveFolderPath { get; set; } = string.Empty;
 
-        public const int ProgramVersion = 2; // This version number does not have anything to do with a format like 1.0.0. Any time the version number updates at all, even for just a patch
+        public const int ProgramVersion = 3; // This version number does not have anything to do with a format like 1.0.0. Any time the version number updates at all, even for just a patch
                                              // this number should increase by one.
 
         public MainWindow()
