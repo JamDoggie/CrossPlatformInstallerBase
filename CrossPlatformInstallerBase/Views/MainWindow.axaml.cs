@@ -501,7 +501,6 @@ namespace CrossPlatformInstallerBase.Views
                             bw.Write(bits, 0, (int)stream.Length);
                         }
                     }
-                    stream.Close();
                 }
 
 
@@ -510,6 +509,12 @@ namespace CrossPlatformInstallerBase.Views
                 {
                     using (ZipFile zip = ZipFile.Read(tempPath))
                     {
+                        zip.ZipError += (sender, e) =>
+                        {
+                            if (e.Exception != null)
+                                throw e.Exception;
+                        };
+
                         int entryNum = 0;
                         window.CanClose = false;
                         foreach (ZipEntry entry in zip.Entries)
@@ -634,8 +639,6 @@ namespace CrossPlatformInstallerBase.Views
 
             base.OnSwitchedTo();
         }
-
-        
     }
 
 
