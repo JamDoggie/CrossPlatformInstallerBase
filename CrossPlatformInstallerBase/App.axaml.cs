@@ -24,6 +24,8 @@ namespace CrossPlatformInstallerBase
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, uint attr, ref int attrValue, int attrSize);
         #endregion
 
+        public static bool UpdateMode { get; set; } = true;
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);

@@ -48,16 +48,19 @@
         <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{DynamicResource ThemeAccentColor}"></SolidColorBrush>
         <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{DynamicResource ThemeAccentColor2}"></SolidColorBrush>
         <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{DynamicResource ThemeAccentColor3}"></SolidColorBrush>
-       
 
-        <Thickness x:Key="ThemeBorderThickness">0</Thickness>
-        <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>
 
-        <sys:Double x:Key="FontSizeSmall">10</sys:Double>
-        <sys:Double x:Key="FontSizeNormal">12</sys:Double>
-        <sys:Double x:Key="FontSizeLarge">16</sys:Double>
+       <QuinticEaseOut x:Key="SmoothScrollEase"/>
+       <BounceEaseIn x:Key="ScrollEase"/>
 
-        <sys:Double x:Key="ScrollBarThickness">20</sys:Double>
+       <Thickness x:Key="ThemeBorderThickness">0</Thickness>
+       <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>
+
+       <sys:Double x:Key="FontSizeSmall">10</sys:Double>
+       <sys:Double x:Key="FontSizeNormal">12</sys:Double>
+       <sys:Double x:Key="FontSizeLarge">16</sys:Double>
+
+       <sys:Double x:Key="ScrollBarThickness">20</sys:Double>
     </Style.Resources>
 
 </Style>

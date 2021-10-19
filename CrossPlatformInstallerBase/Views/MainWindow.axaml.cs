@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -94,6 +95,8 @@ namespace CrossPlatformInstallerBase.Views
         {
             AvaloniaXamlLoader.Load(this);
 
+            DataContext = new MainWindowViewModel();
+
             NextButton = this.FindControl<Button>("NextButton");
             BackButton = this.FindControl<Button>("BackButton");
             Grid1 = this.FindControl<Grid>("Grid1");
@@ -142,6 +145,13 @@ namespace CrossPlatformInstallerBase.Views
             MoveInstallButton.Click += MoveInstallButton_Click;
             UninstallButton.Click += UninstallButton_Click;
 
+            Activated += (obj, e) =>
+            {
+                UpdateButtons();
+
+                if (App.UpdateMode)
+                    DisableButtons();
+            };
 
             // Check if the program has already been installed
             var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\OcclusionVoiceChat", true);
@@ -158,10 +168,23 @@ namespace CrossPlatformInstallerBase.Views
                         Pages.Insert(1, new Page(this, GridReinstall, false, true));
                         ReinstallPath = path;
                         RegistryPath = path;
+
+                        // Set up as updater.
+                        if (App.UpdateMode)
+                        {
+                            Pages[PageIndex].UnderlyingGrid.IsVisible = false;
+                            PageIndex = GetPageIndexByType<InstallingPage>();
+                            InstallLocationBox.Text = Path.GetDirectoryName(path);
+                            UpdateButtons();
+                            Pages[PageIndex].OnSwitchedTo();
+                            Pages[PageIndex].UnderlyingGrid.IsVisible = true;
+                        }
                     }
                 }
                 
             }
+
+            UpdateButtons();
         }
 
         private void UninstallButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -173,7 +196,7 @@ namespace CrossPlatformInstallerBase.Views
         {
             for(int i = 0; i < Pages.Count; i++)
             {
-                if (Pages[i].GetType() == typeof(T))
+                if (Pages[i] is T)
                     return i;
             }
 
@@ -270,7 +293,7 @@ namespace CrossPlatformInstallerBase.Views
             Page currentPage = Pages[PageIndex];
 
             RunProgramAfterClosing.IsVisible = false;
-            PageIndex = 5;
+            PageIndex = GetPageIndexByType<FinalPage>();
 
             if (CanSwitchPages)
             {
@@ -477,7 +500,9 @@ namespace CrossPlatformInstallerBase.Views
 
                 var dirInfo = new DirectoryInfo(path);
 
-                dirInfo.Create();
+                if(!dirInfo.Exists)
+                    dirInfo.Create();
+
                 // If the path is valid & created, we will have gotten here in the code.
                 // Extract zip file with contents to temp location
                 var resourcePath = Assembly.GetExecutingAssembly().GetManifestResourceNames()
@@ -525,6 +550,15 @@ namespace CrossPlatformInstallerBase.Views
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
                                 (window.DataContext as MainWindowViewModel).InstallStatus = $"Installing {(int)(((float)entryNum / (float)zip.Entries.Count) * 100)}%";
+
+                                if (App.UpdateMode)
+                                {
+                                    (window.DataContext as MainWindowViewModel).BeingInstalled = "Please wait while Occlusion is updated...";
+                                    (window.DataContext as MainWindowViewModel).InstallStatus = $"Updating {(int)(((float)entryNum / (float)zip.Entries.Count) * 100)}%";
+                                    (window.DataContext as MainWindowViewModel).FinalScreenMessage = "Occlusion has been successfully updated to the latest version.";
+                                }
+                                    
+
                                 window.InstallProgressBar.Value = (float)entryNum / (float)zip.Entries.Count;
 
                                 if (window.InstallProgressBar.Value >= 1)
@@ -621,7 +655,7 @@ namespace CrossPlatformInstallerBase.Views
 
 
 
-                base.NextPage();
+                //base.NextPage();
 
                 window.DisableButtons();
             }
@@ -723,20 +757,22 @@ namespace CrossPlatformInstallerBase.Views
 
         public bool CheckForRequiredRuntime()
         {
-            // Start a new process. This process will be a command prompt running the dotnet command to check what versions of .net are installed.
-            // This is a bit janky but seems like the best way to do this.
-            Process p = new Process();
-            // Redirect the output stream of the child process.
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = "CMD.exe";
-            p.StartInfo.Arguments = "/C dotnet --list-runtimes"; // /C tells cmd to terminate when it's finished instead of waiting for the user to close it.
-            p.Start();
+            DirectoryInfo dir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "/dotnet/host/fxr");
 
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
+            if (dir.Exists)
+            {
+                Regex regex = new Regex("5\\.[0-9]+\\.[0-9].*?", RegexOptions.IgnoreCase);
+                foreach (DirectoryInfo version in dir.GetDirectories())
+                {
+                    bool match = regex.IsMatch(version.Name);
+                    if (match)
+                    {
+                        return true;
+                    }
+                }
+            }
 
-            return output.Contains("Microsoft.WindowsDesktop.App 5.");
+            return false;
         }
     }
 

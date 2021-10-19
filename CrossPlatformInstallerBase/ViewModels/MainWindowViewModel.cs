@@ -12,7 +12,7 @@ namespace CrossPlatformInstallerBase.ViewModels
     {
         public string LicenseText { get; set; } = "License";
 
-        private string _nextText = "I have read and accept the terms above";
+        private string _nextText;
         public string NextText 
         {
             get => _nextText;
@@ -20,7 +20,7 @@ namespace CrossPlatformInstallerBase.ViewModels
             set => this.RaiseAndSetIfChanged(ref _nextText, value);
         }
 
-        private string _backText = "Back";
+        private string _backText;
         public string BackText
         {
             get => _backText;
@@ -63,6 +63,16 @@ namespace CrossPlatformInstallerBase.ViewModels
 
             set => this.RaiseAndSetIfChanged(ref _installStatus, value);
         }
+
+        private string _beingInstalled = "Please wait while Occlusion is being installed...";
+
+        public string BeingInstalled
+        {
+            get => _beingInstalled;
+
+            set => this.RaiseAndSetIfChanged(ref _beingInstalled, value);
+        }
+
 
         private string _uninstallStatus = "Uninstalling...";
         public string UninstallStatus

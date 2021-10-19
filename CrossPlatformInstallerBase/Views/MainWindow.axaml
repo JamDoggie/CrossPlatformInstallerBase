@@ -2,16 +2,13 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:CrossPlatformInstallerBase.ViewModels"
+        xmlns:controls="using:CrossPlatformInstallerBase.controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"  Width="700" Height="500"
         x:Class="CrossPlatformInstallerBase.Views.MainWindow"
         Icon="/Assets/Occlusion_icon.ico"
         Title="Occlusion Voice Chat Win-x64 Installer" Background="#32323b" CanResize="False">
-
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
 
   <Window.Resources>
     <PageSlide x:Key="PageSlider" Duration="0:0:0.5" Orientation="Horizontal">
@@ -33,10 +30,13 @@
             <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
             <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30">Occlusion Voice Chat x64 Installer</TextBlock>
           </StackPanel>
-    
-          <TextBox TextAlignment="Center" IsReadOnly="True" Height="310" Margin="30 0 30 0" Text="{Binding LicenseText}">
-        
-          </TextBox>
+
+          <controls:SmoothScrollViewer Height="310" Margin="30 0 30 0">
+            <TextBox TextAlignment="Center" IsReadOnly="True"  Text="{Binding LicenseText}">
+
+            </TextBox>
+          </controls:SmoothScrollViewer >
+
         </StackPanel>
       </Grid>
       
@@ -83,8 +83,7 @@
         <StackPanel Orientation="Vertical">
           <StackPanel Orientation="Horizontal" Margin="50 20 20 20">
             <Image Width="100" Source="avares://CrossPlatformInstallerBase/installerfiles/installericon.png"></Image>
-            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" FontSize="30">
-              Please wait Occlusion is installed...
+            <TextBlock VerticalAlignment="Center" Margin="40 0 0 0" Text="{Binding BeingInstalled}" FontSize="27">
             </TextBlock>
           </StackPanel>
     
