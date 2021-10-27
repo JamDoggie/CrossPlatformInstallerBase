@@ -5,6 +5,7 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using CrossPlatformInstallerBase.json;
 using CrossPlatformInstallerBase.ViewModels;
 using Ionic.Zip;
 using IWshRuntimeLibrary;
@@ -153,6 +154,7 @@ namespace CrossPlatformInstallerBase.Views
                     DisableButtons();
             };
 
+#if WINDOWS
             // Check if the program has already been installed
             var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\OcclusionVoiceChat", true);
 
@@ -183,7 +185,35 @@ namespace CrossPlatformInstallerBase.Views
                 }
                 
             }
+#endif
 
+#if LINUX
+            FileInfo occlusionConfigFile = new FileInfo("etc/occlusion_settings.json");
+
+            if (occlusionConfigFile.Exists)
+            {
+                JsonFile<OcclusionLinuxSettings> configFile = new JsonFile<OcclusionLinuxSettings>(occlusionConfigFile.FullName, new OcclusionLinuxSettings());
+
+                if (configFile.Obj.VersionNumber >= ProgramVersion)
+                {
+                    ProgramIsAlreadyInstalled = true;
+                    Pages.Insert(1, new Page(this, GridReinstall, false, true));
+                    ReinstallPath = configFile.Obj.ProgramPath;
+                    RegistryPath = configFile.Obj.ProgramPath;
+
+                    // Set up as updater.
+                    if (App.UpdateMode)
+                    {
+                        Pages[PageIndex].UnderlyingGrid.IsVisible = false;
+                        PageIndex = GetPageIndexByType<InstallingPage>();
+                        InstallLocationBox.Text = Path.GetDirectoryName(configFile.Obj.ProgramPath);
+                        UpdateButtons();
+                        Pages[PageIndex].OnSwitchedTo();
+                        Pages[PageIndex].UnderlyingGrid.IsVisible = true;
+                    }
+                }
+            }
+#endif
             UpdateButtons();
         }
 
@@ -757,6 +787,7 @@ namespace CrossPlatformInstallerBase.Views
 
         public bool CheckForRequiredRuntime()
         {
+#if WINDOWS
             DirectoryInfo dir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "/dotnet/host/fxr");
 
             if (dir.Exists)
@@ -773,6 +804,25 @@ namespace CrossPlatformInstallerBase.Views
             }
 
             return false;
+#endif
+
+#if LINUX
+            // Start a new process. This process will be a command prompt running the dotnet command to check what versions of .net are installed.
+            // This is a bit janky but seems like the best way to do this.
+            Process p = new Process();
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.FileName = "/bin/bash";
+            p.StartInfo.Arguments = "\"dotnet --list-runtimes\" stop"; // /C tells cmd to terminate when it's finished instead of waiting for the user to close it.
+
+            p.Start();
+
+            string output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+
+            return output.Contains("Microsoft.NETCore.App 5.0.");
+#endif
         }
     }
 

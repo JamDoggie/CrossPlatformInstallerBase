@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace CrossPlatformInstallerBase
 {
@@ -16,6 +18,15 @@ namespace CrossPlatformInstallerBase
             {
                 if (s == "-updatemode")
                     App.UpdateMode = true;
+            }
+
+            var entryAssembly = Assembly.GetEntryAssembly();
+            if (entryAssembly != null)
+            {
+                var exePath = Path.GetDirectoryName(entryAssembly.Location);
+                if (exePath != null)
+                    Directory.SetCurrentDirectory(exePath); // Not really required on windows, but required on mac for some reason or else it tries to use 
+                                                            // the home directory for storage which breaks things.
             }
 
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
