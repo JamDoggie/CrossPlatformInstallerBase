@@ -805,24 +805,6 @@ namespace CrossPlatformInstallerBase.Views
 
             return false;
 #endif
-
-#if LINUX
-            // Start a new process. This process will be a command prompt running the dotnet command to check what versions of .net are installed.
-            // This is a bit janky but seems like the best way to do this.
-            Process p = new Process();
-            // Redirect the output stream of the child process.
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = "/bin/bash";
-            p.StartInfo.Arguments = "\"dotnet --list-runtimes\" stop"; // /C tells cmd to terminate when it's finished instead of waiting for the user to close it.
-
-            p.Start();
-
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-
-            return output.Contains("Microsoft.NETCore.App 5.0.");
-#endif
         }
     }
 
