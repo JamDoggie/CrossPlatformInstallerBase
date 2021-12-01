@@ -787,7 +787,6 @@ namespace CrossPlatformInstallerBase.Views
 
         public bool CheckForRequiredRuntime()
         {
-#if WINDOWS
             DirectoryInfo dir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "/dotnet/host/fxr");
 
             if (dir.Exists)
@@ -804,7 +803,6 @@ namespace CrossPlatformInstallerBase.Views
             }
 
             return false;
-#endif
         }
     }
 
