@@ -278,8 +278,8 @@ namespace CrossPlatformInstallerBase.Views
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (!CanClose)
-                e.Cancel = true;
+            //if (!CanClose)
+            //    e.Cancel = true;
         }
 
         private async void BrowseButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -494,16 +494,12 @@ namespace CrossPlatformInstallerBase.Views
             {
                 Process.Start(MainWindow.EXEPath);
 
-                var tempPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion_tempfiles.tmp.zip";
+                string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion_tempfiles.tmp.zip";
 
-                
                 window.CleanupInstaller(tempPath);
             }
 
             window.Close();
-
-            base.NextPage();
-
         }
     }
 
@@ -727,15 +723,15 @@ namespace CrossPlatformInstallerBase.Views
             }
             else
             {
-                (window.DataContext as MainWindowViewModel).PreReqInstallText = "Downloading .Net 5.0.7 from Microsoft";
+                (window.DataContext as MainWindowViewModel).PreReqInstallText = "Downloading .Net 6.0.4 from Microsoft";
 
                 // Download .Net 5
                 using (WebClient wc = new WebClient())
                 {
-                    var installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion_net5_download.tmp.exe";
+                    var installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion_win_download.tmp.exe";
 
                     wc.DownloadFileAsync(
-                        new Uri("https://download.visualstudio.microsoft.com/download/pr/2b83d30e-5c86-4d37-a1a6-582e22ac07b2/c7b1b7e21761bbfb7b9951f5b258806e/windowsdesktop-runtime-5.0.7-win-x64.exe"),
+                        new Uri("https://download.visualstudio.microsoft.com/download/pr/2e97f1f0-f321-4baf-8d02-0be5f08afc4e/2a011c8f9b2792e17d363a21c0ed8fdc/dotnet-runtime-6.0.4-win-x64.exe"),
                         installerPath);
                     
                     // Progress bar
@@ -743,8 +739,8 @@ namespace CrossPlatformInstallerBase.Views
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            window.PreReqBar.Value = ((float)e.BytesReceived / (float)e.TotalBytesToReceive);
-                            (window.DataContext as MainWindowViewModel).PreReqInstallText = $"Downloading .Net 5.0.7 from Microsoft ({(int)(((float)e.BytesReceived / (float)e.TotalBytesToReceive) * 100)}% | {e.BytesReceived} / {e.TotalBytesToReceive} bytes)";
+                            window.PreReqBar.Value = ((float)e.BytesReceived / e.TotalBytesToReceive);
+                            (window.DataContext as MainWindowViewModel).PreReqInstallText = $"Downloading .Net 6.0.4 from Microsoft ({(int)(((float)e.BytesReceived / e.TotalBytesToReceive) * 100)}% | {e.BytesReceived} / {e.TotalBytesToReceive} bytes)";
                         });
                     };
 
@@ -769,7 +765,7 @@ namespace CrossPlatformInstallerBase.Views
                         }
                         else
                         {
-                            (window.DataContext as MainWindowViewModel).PreReqInstallText = "Required runtimes have all been successfully installed. Please click next to continue.";
+                            (window.DataContext as MainWindowViewModel).PreReqInstallText = "Required runtimes have been successfully installed. Please click next to continue.";
                             window.NextButton.IsEnabled = true;
                         }
                     };
